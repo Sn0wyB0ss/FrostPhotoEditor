@@ -13,8 +13,8 @@ const button_close_create_project_menu = document.getElementById("button-close-c
 
 //Canvas Variables
 const ctx = canvas.getContext('2d');
-const CANVAS_WIDTH = 1600;
-const CANVAS_HEIGHT = 800; 
+const CANVAS_WIDTH = 640;
+const CANVAS_HEIGHT = 480; 
 canvas.width = CANVAS_WIDTH;
 canvas.height = CANVAS_HEIGHT;
 canvas.style.width = CANVAS_WIDTH;
@@ -323,7 +323,8 @@ const redrawImages = async () => {
         ctx.clearRect(0,0,CANVAS_WIDTH*Math.abs(10-(10*cam_zoom_size)),CANVAS_HEIGHT*Math.abs(10-(10*cam_zoom_size)));
     }
     for (image of image_list) {
-        console.log(outOfCanvasBoundaries(image.x, image.y, image.width, image.height));
+        console.log(cam_x, image.x+image.width);
+        //console.log(outOfCanvasBoundaries(image.x, image.y, image.width, image.height));
         if (outOfCanvasBoundaries(image.x, image.y, image.width, image.height)) {
             console.log("working");
             continue;
