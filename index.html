@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
         <meta http-equiv="X-UA-Compatible" content="ie=edge"/>
         <title>Image Reference App</title>
-        <link rel="icon" type="image/x-icon" href="assets/images/favicom.ico">
+        <link rel="icon" type="image/x-icon" href="assets/images/icon/favicom.ico">
         <link rel="stylesheet" href="style.css"/>
     </head>
     <body>
@@ -13,14 +13,17 @@
             <button class="button-div" id="button-new">New</button>
             <button class="button-div" id="button-save">Save</button>
             <button class="button-div" id="button-load">Load</button>
+            <button class="button-div" id="button-theme">Theme</button>
         </div>
+
         <div class="center-div">
         <canvas id="canvas"></canvas>
         </div>
+
         <div id="layer-container"class="layer-div-section"></div>
 
-        <div class="load-project-menu">
-        </div>
+        <div class="load-project-menu"></div>
+
         <div class="create-project-menu">
             <button class="close-button" id="button-close-create-project-menu">X</button>
             <div>
@@ -31,8 +34,13 @@
                 <button class="button-div" id="button-create-project">Create Project</button>
             </div>
         </div>
+        
+        <div class="change-theme-menu">
+            <button class="button-div" id="next-theme-button">Next Theme</button>
+            <button class="button-div" id="close-theme-button">Close</button>
+        </div>
 
-        <script src="script.js"></script>
+        <script type="module" src="script.js"></script>
     </body>
     
 </html>

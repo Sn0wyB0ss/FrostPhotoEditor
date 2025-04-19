@@ -1,27 +1,47 @@
-//Options Settings
-showCanvasImageName = false;
+import cookie_run_theme from './assets/themes/cookie_run_theme.json' with {type:"json"};
+import celeste_theme from './assets/themes/celeste_theme.json' with {type:"json"};
 
-//DOM Elements Variables
+console.log(cookie_run_theme)
+
+//Options Settings
+let showCanvasImageName = false;
+
+// #region DOM Elements Variables
+const body = document.getElementsByTagName("BODY")[0];
 const load_button = document.getElementById("button-load");
 const new_button = document.getElementById("button-new");
 const save_button = document.getElementById("button-save");
+const theme_button = document.getElementById("button-theme");
 const layer_container = document.getElementById("layer-container");
 const canvas = document.getElementById("canvas");
 const create_project_menu  = document.getElementsByClassName("create-project-menu")[0];
+
 const button_close_create_project_menu = document.getElementById("button-close-create-project-menu");
+const next_theme_button = document.getElementById("next-theme-button");
+const close_theme_button = document.getElementById("close-theme-button");
+const change_theme_menu = document.getElementsByClassName("change-theme-menu")[0];
+// #endregion
 
+// #region Theme Variables and DOM
+let themesList = [cookie_run_theme, celeste_theme];
+let actualTheme = 0;
+const returnThemePath = (selectedTheme) => {
+    return "url(./assets/images/theme/" + selectedTheme.background_image + ")";
+};
+body.style.backgroundImage = returnThemePath(themesList[actualTheme]);
+// #endregion
 
-//Canvas Variables
+// #region Canvas Variables
 const ctx = canvas.getContext('2d');
-const CANVAS_WIDTH = 640;
-const CANVAS_HEIGHT = 480; 
+const CANVAS_WIDTH = 1000;
+const CANVAS_HEIGHT = 1000; 
 canvas.width = CANVAS_WIDTH;
 canvas.height = CANVAS_HEIGHT;
 canvas.style.width = CANVAS_WIDTH;
 canvas.style.height = CANVAS_HEIGHT;
+// #endregion
 
-
-//Camera Variables
+// #region Camera Variables
 var image_list = new Array();
 var next_id = 0;
 var cam_zoom_size = 1;
@@ -34,10 +54,14 @@ var mouse_pos_prev_x = mouse_pos_x;
 var mouse_pos_prev_y = mouse_pos_y;
 var x_ratio = (CANVAS_WIDTH * cam_zoom_size)/CANVAS_WIDTH;
 var y_ratio = (CANVAS_HEIGHT * cam_zoom_size)/CANVAS_HEIGHT;
+// #endregion
 
-//Mouse Variables
+
+// Mouse Variables
 
 ctx.scale(1/cam_zoom_size, 1/cam_zoom_size);
+
+// #region Load and Save Functions
 
 const loadCamSave = () => {
 
@@ -73,7 +97,7 @@ const newSaveData = () => {
 };
 
 const loadSaveData = () => {
-    json_string = localStorage.getItem('imageList');
+    const json_string = localStorage.getItem('imageList');
     next_id = localStorage.getItem('nextID');
 
     if (json_string === null && next_id === null) {
@@ -101,6 +125,11 @@ const save = () => {
     localStorage.setItem('nextID',next_id);
     saveCamData();
 };
+
+// #endregion
+
+
+// #region Canvas and Image Functions
 
 const removeAllLayers = () => {
     while (layer_container.firstChild) {
@@ -134,6 +163,27 @@ const resizeCanvas = () => {
     redrawImages();
 };
 
+// #endregion
+
+
+// #region Other Functions and Event Handlers
+
+theme_button.addEventListener('click', (event) => {
+    showThemeMenu();
+})
+
+next_theme_button.addEventListener('click', (event) => {
+    actualTheme++;
+    if (actualTheme >= themesList.length) {
+        actualTheme = 0;
+    }
+    body.style.backgroundImage = returnThemePath(themesList[actualTheme]);
+})
+
+close_theme_button.addEventListener('click', (event)=>{
+    hideThemeMenu();
+})
+
 load_button.addEventListener('click', (event) => {
     loadSaveData();
 })
@@ -154,7 +204,7 @@ canvas.addEventListener('contextmenu',(event)=>{
 })
 
 canvas.addEventListener('wheel',(event) => {
-    wheel_dir = Math.sign(event.deltaY);
+    var wheel_dir = Math.sign(event.deltaY);
     cam_zoom_size = Math.max(0.1,cam_zoom_size+(0.1*wheel_dir));
     resizeCanvas();
 })
@@ -255,7 +305,8 @@ const pasteImage = async (event) => {
 
 const recreateLayerDom = async () => {
     removeAllLayers();
-    for (image of image_list) {
+    console.log(image_list);
+    for (var image of image_list) {
         createLayer(image);
     }
 }
@@ -322,7 +373,7 @@ const redrawImages = async () => {
     else {
         ctx.clearRect(0,0,CANVAS_WIDTH*Math.abs(10-(10*cam_zoom_size)),CANVAS_HEIGHT*Math.abs(10-(10*cam_zoom_size)));
     }
-    for (image of image_list) {
+    for (var image of image_list) {
         console.log(cam_x, image.x+image.width);
         //console.log(outOfCanvasBoundaries(image.x, image.y, image.width, image.height));
         if (outOfCanvasBoundaries(image.x, image.y, image.width, image.height)) {
@@ -360,7 +411,7 @@ const detectMouseInsideImage = (mouseX,mouseY,imageX,imageY,width,height) => {
 const selectImage = async (mouseX, mouseY) => {
     let only_one_selected = false;
     image_list.reverse();
-    for (image of image_list) {
+    for (var image of image_list) {
         image.selected = false;
         if (detectMouseInsideImage(mouseX, mouseY,image.x,image.y,image.width,image.height) && !only_one_selected) {
             image.selected = true;
@@ -371,7 +422,7 @@ const selectImage = async (mouseX, mouseY) => {
 };
 
 const deselectImage = async () => {
-    for (image of image_list) {
+    for (var image of image_list) {
         image.selected = false;
     }
 };
@@ -384,7 +435,7 @@ const moveCamera = async (mouseX, mouseY) => {
 
 const moveImage = async (mouseX, mouseY) => {
     let layers_id = 0;
-    for (image of image_list) {
+    for (var image of image_list) {
         if (image.selected) {
             image.x += mouseX;
             image.y += mouseY;
@@ -426,14 +477,27 @@ const blobToBase64 = blob => {
     });
   };
 
+// #endregion
+
+
 const hideCreateProjectMenu = () => {
     create_project_menu.style.display = "none";
 };
+
+const hideThemeMenu = () => {
+    change_theme_menu.style.display = "none";
+}
+
+const showThemeMenu = () => {
+    change_theme_menu.style.display = "block";
+}
 
 const showCreateProjectMenu = () => {
     create_project_menu.style.display = "block";
 }
 
+
 // DOM and logic things when the pages load
 hideCreateProjectMenu();
+hideThemeMenu();
 loadSaveData();
