@@ -5,6 +5,8 @@ console.log(cookie_run_theme)
 
 //Options Settings
 let showCanvasImageName = false;
+let json_data = null;
+let save_data = null;
 
 // #region DOM Elements Variables
 const body = document.getElementsByTagName("BODY")[0];
@@ -25,9 +27,7 @@ const change_theme_menu = document.getElementsByClassName("change-theme-menu")[0
 // #region Theme Variables and DOM
 let themesList = [cookie_run_theme, celeste_theme];
 let actualTheme = 0;
-const returnThemePath = (selectedTheme) => {
-    return "url(./assets/images/theme/" + selectedTheme.background_image + ")";
-};
+
 body.style.backgroundImage = returnThemePath(themesList[actualTheme]);
 // #endregion
 
@@ -43,7 +43,7 @@ canvas.style.height = CANVAS_HEIGHT;
 
 // #region Camera Variables
 var image_list = new Array();
-var next_id = 0;
+let next_id = 0;
 var cam_zoom_size = 1;
 var cam_x = 0;
 var cam_y = 0;
@@ -63,11 +63,24 @@ ctx.scale(1/cam_zoom_size, 1/cam_zoom_size);
 
 // #region Load and Save Functions
 
+const veriyItemAndLoad = (variable,itemName) => {
+    if (localStorage.getItem(itemName) != null) {
+        variable = localStorage.getItem(itemName);
+    }
+};
+
+const loadTheme = () => {
+    let theme_data = localStorage.getItem("actualTheme");
+    if (theme_data === null) {return;}
+    actualTheme = theme_data;
+    body.style.backgroundImage = returnThemePath(themesList[actualTheme]);
+};
+
 const loadCamSave = () => {
 
-    cam_x_saved_data = localStorage.getItem("camX");
-    cam_y_saved_data = localStorage.getItem("camY");
-    cam_zoom_size_saved_data = localStorage.getItem("camZoomSize");
+    let cam_x_saved_data = localStorage.getItem("camX");
+    let cam_y_saved_data = localStorage.getItem("camY");
+    let cam_zoom_size_saved_data = localStorage.getItem("camZoomSize");
 
     if (!cam_x_saved_data === null) {
         cam_x = Number(cam_x_saved_data);
@@ -93,14 +106,15 @@ const saveCamData = () => {
 const newSaveData = () => {
     localStorage.setItem('imageList', "");
     localStorage.setItem('nextID',0);
+    localStorage.setItem('actualTheme', actualTheme);
     next_id = 0;
 };
 
 const loadSaveData = () => {
     const json_string = localStorage.getItem('imageList');
-    next_id = localStorage.getItem('nextID');
+    veriyItemAndLoad(next_id,'nextID');
 
-    if (json_string === null && next_id === null) {
+    if (json_string === null || next_id === null) {
         return;
     }
 
@@ -112,17 +126,21 @@ const loadSaveData = () => {
         return;
     }
 
+    console.log(json_string)
+
     json_data = JSON.parse(json_string);
     image_list = json_data.image_list;
     redrawImages();
     recreateLayerDom();
     loadCamSave();
+    loadTheme();
 };
 
 const save = () => {
     save_data = {"image_list":image_list};
     localStorage.setItem('imageList', JSON.stringify(save_data));
     localStorage.setItem('nextID',next_id);
+    localStorage.setItem('actualTheme',actualTheme);
     saveCamData();
 };
 
