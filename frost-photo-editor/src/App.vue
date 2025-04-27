@@ -9,6 +9,7 @@ import Headers from './components/Headers.vue';
 
   <main>
     <Headers/>
+    <Canvass/>
     <Layer/>
 
   </main>
