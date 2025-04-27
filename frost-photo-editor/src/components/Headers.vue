@@ -1,6 +1,6 @@
 <script>
     export default {
-        name: "Header",
+        name: "Headers",
         data() {
             return {
             };
@@ -25,16 +25,13 @@
 
 <style scoped>
 
-#app {
-    padding: 0;
-}
 
 .button-div-section {
-    width: 100vw;
+    width: 100%;
     height: 5%;
     box-sizing: border-box;
     background-color: #444;
-    display: flex;
+    display: absolute;
     flex-direction: row;
 }
 
